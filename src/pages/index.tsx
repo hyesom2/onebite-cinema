@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+import SearchableLayout from '@/components/searchable-layout';
 import styles from './index.module.css';
 
 export default function Home() {
@@ -9,19 +11,19 @@ export default function Home() {
   );
 }
 
-/* 
-  * 스타일링
-  1. 인라인 스타일 : HTML요소가 많아지면 가독성이 안좋아짐
-  → <h1 style={{ color: "blue" }}>
-  
-  2. CSS 파일을 별도로 생성 : Failed to compile 발생
-  → global CSS 파일은 App컴포넌트가 아닌 곳에서는 불러올 수 없음
-  → class 이름들이 서로 충돌되는 문제가 발생할 수 있기 때문
-  → import './index.css';
+Home.getLayout = (page: ReactNode) => {
+  return <SearchableLayout>{ page }</SearchableLayout>
+  // page : 현재의 페이지 역할을 할 컴포넌트를 받아와서 SearchableLayout이 적용된 페이지를 리턴해주는 함수가 된다.
+}
 
-  3. CSS Module
-  → 기존의 CSS 파일을 마치 모듈처럼 사용할 수 있도록 도와줌
-  → CSS파일에 작성해둔 class 이름들이 다른 CSS파일과 중복되지 않도록 자동으로 유니크한 이름으로 변환
-  → import styles from './index.module.css';
-  → <h2 className={styles.name}>
+/* 
+  * 개별 페이지에 레이아웃을 별도로 적용하는 방법
+  : SearchableLayout처럼 특정 페이지에만 적용되길 원하는 레이아웃을 적용시키려면
+  1. 적용시키려는 컴포넌트(ex. Home컴포넌트)에 getLayout 메서드 추가 → Home.getLayout
+  2. page 라는 매개변수를 받음 → (page: ReactNode)
+  → type이 ReactNode인 이유 : next에서는 모든 페이지가 리액트 컴포넌트 이기 때문에
+  3. page매개변수를 SearchableLayout으로 감싼 형태로 return하도록 설정 → return <SearchableLayout>{ page }</SearchableLayout>
+
+  * 어떻게 메서드를 또 추가를 한 것일까?
+  : JavaScript의 모든 함수들은 다 "객체"이기 때문에 메서드를 추가할 수 있다.
 */
