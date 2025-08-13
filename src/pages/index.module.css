@@ -1,3 +1,21 @@
-.name {
-  color: red;
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.container h3 {
+  margin-bottom: 0px;
+}
+
+.recommend_movie {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.register_movie {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
 }

@@ -1,16 +1,22 @@
 import { ReactNode } from 'react';
 import { useRouter } from 'next/router'
+import styles from '@/pages/search/index.module.css';
 import SearchableLayout from '@/components/searchable-layout';
+import MovieItem from '@/components/movie-item';
+import movies from '@/mock/dummy.json';
 
 export default function Page() {
   const router = useRouter();
-  const { q } = router.query;
+  const q = router.query.q as string;
+
+  const filteredMovies = movies.filter((movie) => movie.title.includes(q));
 
   return (
-    <>
-      <h1>Search 페이지</h1>
-      <h2>검색 결과 : { q }</h2>
-    </>
+    <div className={styles.container}>
+      {
+        filteredMovies.map((movie) => <MovieItem key={movie.id} {...movie} />)
+      }
+    </div>
   )
 }
 
