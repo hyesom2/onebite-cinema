@@ -3,7 +3,7 @@ import styles from '@/pages/index.module.css';
 import { ReactNode } from 'react';
 import SearchableLayout from '@/components/searchable-layout';
 import MovieItem from '@/components/movie-item';
-import { InferGetServerSidePropsType } from 'next';
+import type { InferGetServerSidePropsType } from 'next';
 import fetchMovies from '@/lib/fetch-movies';
 import fetchRandomMovies from '@/lib/fetch-random-movies';
 
