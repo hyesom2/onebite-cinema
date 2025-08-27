@@ -2,25 +2,40 @@
 import styles from '@/pages/movie/[id].module.css';
 import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 import fetchDetailMovies from '@/lib/fetch-detail-movies';
+import { useRouter } from 'next/router';
 
 export const getStaticPaths = () => {
   return {
-    // return으로 객체를 반환 → 객체 안에 paths라는 값으로 현재 이 페이지에 어떠한 URL 파라미터들이 존재할 수 있는지를 배열로 반환하도록 설정
     paths: [
-    // URL 파라미터의 값은 반드시 문자열로만 명시해야 함 → Next.js가 정상적으로 이 경로들을 읽어와야하기 때문
       {params: { id: '1'}},
       {params: { id: '2'}},
       {params: { id: '3'}},
     ],
-    fallback: false,
-    // 대체, 예외상황의 대비책 → paths값에 해당하지 않는 URL로 접속하게 될 때 어떻게 할 것인지 설정하는 역할
-    // false로 설정할 경우 없는페이지(Not Found)로 취급
+    fallback: true,
+    /* 
+      * fallback 옵션 설정(없는 경로로 요청 시)
+      - true : 즉시 생성 + 페이지만 미리 반환
+      1. props가 없는 페이지 반환 : getStaticProps로 부터 받은 데이터가 없는 페이지 → 데이터가 없는 상태의 페이지 렌더링
+      2. props 계산
+      3. props만 따로 반환 → 데이터가 있는 상태의 페이지 렌더링
+      - false : 404 Not Found 반환
+      - blocking : 즉시 생성 (Like SSR) → 빌드 타임에 사전에 생성해 두지 않았던 페이지까지 사용자에게 제공해 줄 수 있다.
+
+      * fallback 상태 : 페이지 컴포넌트가 아직 server로 부터 데이터를 전달받지 못한 상태
+    */
   }
 }
 
 export const getStaticProps = async (context: GetStaticPropsContext) => {
   const id = context.params!.id;
   const movie = await fetchDetailMovies(Number(id));
+
+  // * movie가 존재하지 않는 페이지로 들어왔을 때 NotFound로 이동하고 싶을 때
+  if (!movie) {
+    return {
+      notfound: true
+    }
+  }
   
   return {
     props: {
@@ -30,7 +45,11 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
 }
 
 export default function Page({ movie }: InferGetStaticPropsType<typeof getStaticProps>) {
-  if(!movie) return "해당 영화의 상세 페이지를 찾을 수 없습니다. 다시 시도해주세요."
+  // * 컴포넌트가 fallback 상태일 때
+  const router = useRouter();
+  if (router.isFallback) return "로딩 중 입니다.";
+  if (!movie) return "문제가 발생했습니다. 다시 시도해주세요.";
+
   const { id, title, releaseDate, company, genres, subTitle, description, runtime, posterImgUrl } = movie;
 
   return (
@@ -48,11 +67,3 @@ export default function Page({ movie }: InferGetStaticPropsType<typeof getStatic
     </div>
   )
 }
-
-/* 
-  * Error: getStaticPaths is required for dynamic SSG pages and is missing for '/movie/[...id]'. 오류 발생
-  : 동적(dynamic)페이지는 getStaticPaths 라는 함수가 필요하다
-  : Next.js에서 동적인 경로를 갖도록 설정이 된 페이지에서 SSG를 적용하려면 반드시 사전 렌더링이 진행되기 전에 이 페이지에 존재할 수 있는 모든 경로들을 직접 설정하는 작업을 먼저 진행해야한다.
-  → 이 때 필요한 함수가 getStaticPaths : 이 페이지에 존재할 수 있는 경로들을 먼저 설정
-  → getStaticProps : 함수를 일일이 한번씩 다 호출하여 사전에 여러 개의 페이지를 렌더링  
-*/
