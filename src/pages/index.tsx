@@ -1,4 +1,3 @@
-// > CSS Modules
 import styles from '@/pages/index.module.css';
 import { ReactNode } from 'react';
 import SearchableLayout from '@/components/searchable-layout';
@@ -6,6 +5,8 @@ import MovieItem from '@/components/movie-item';
 import type { InferGetStaticPropsType } from 'next';
 import fetchMovies from '@/lib/fetch-movies';
 import fetchRandomMovies from '@/lib/fetch-random-movies';
+import Head from 'next/head';
+// 참고) next/document 로 부터 불러와지믄 Head는 _document.tsx에서 사용
 
 export const getStaticProps = async () => {  
   const [allMovies, recoMovies] = await Promise.all([fetchMovies(), fetchRandomMovies()]);
@@ -20,20 +21,28 @@ export const getStaticProps = async () => {
 
 export default function Home({ allMovies, recoMovies }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
-    <div className={styles.container}>
-      <section>
-        <h3>지금 가장 추천하는 영화</h3>
-        <div className={styles.recommend_movie}>
-          {recoMovies.map((movie) => <MovieItem key={movie.id} {...movie} />)}
-        </div>
-      </section>
-      <section>
-        <h3>등록된 모든 영화</h3>
-        <div className={styles.register_movie}>
-          {allMovies.map((movie) => <MovieItem key={movie.id} {...movie} />)}
-        </div>
-      </section>
-    </div>
+    <>
+      <Head>
+        <title>한입씨네마</title>
+        <meta property='og:image' content='/thumbnail.png' />
+        <meta property='og:title' content='한입씨네마' />
+        <meta property='og:description' content='한입씨네마에 등록된 영화들을 만나보세요.' />
+      </Head>
+      <div className={styles.container}>
+        <section>
+          <h3>지금 가장 추천하는 영화</h3>
+          <div className={styles.recommend_movie}>
+            {recoMovies.map((movie) => <MovieItem key={movie.id} {...movie} />)}
+          </div>
+        </section>
+        <section>
+          <h3>등록된 모든 영화</h3>
+          <div className={styles.register_movie}>
+            {allMovies.map((movie) => <MovieItem key={movie.id} {...movie} />)}
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
 
@@ -42,12 +51,6 @@ Home.getLayout = (page: ReactNode) => {
 }
 
 /* 
-  * ISR(Incremental Static Regeneration, 증분 정적 재생성)
-  - SSG방식으로 생성된 정적 페이지를 일정 시간 주기로 다시 생성하는 기술
-  - 빠른 속도로 응답(SSG의 장점) + 최신 데이터 반영(SSR의 장점)
-
-  - 시간 기반의 ISR을 적용하기 어려운 페이지 : 시간과 관게없이 사용자의 행동에 따라 데이터가 업데이트 되는 페이지
-
-  * on-Demand ISR
-  - 요청을 받을 떄 마다 페이지를 다시 생성하는 ISR
+  * Next.js 에서 SEO 설정하기
+  : Next.js에서는 각 페이지 별로 mete 태그를 별도로 설정해 줄 수 있다.
 */
