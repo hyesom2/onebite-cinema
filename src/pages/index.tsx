@@ -15,7 +15,6 @@ export const getStaticProps = async () => {
       allMovies,
       recoMovies,
     },
-    revalidate: 3, // revalidate : 재검증
   }
 }
 
@@ -46,4 +45,9 @@ Home.getLayout = (page: ReactNode) => {
   * ISR(Incremental Static Regeneration, 증분 정적 재생성)
   - SSG방식으로 생성된 정적 페이지를 일정 시간 주기로 다시 생성하는 기술
   - 빠른 속도로 응답(SSG의 장점) + 최신 데이터 반영(SSR의 장점)
+
+  - 시간 기반의 ISR을 적용하기 어려운 페이지 : 시간과 관게없이 사용자의 행동에 따라 데이터가 업데이트 되는 페이지
+
+  * on-Demand ISR
+  - 요청을 받을 떄 마다 페이지를 다시 생성하는 ISR
 */
