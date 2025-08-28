@@ -15,6 +15,7 @@ export const getStaticProps = async () => {
       allMovies,
       recoMovies,
     },
+    revalidate: 3, // revalidate : 재검증
   }
 }
 
@@ -42,7 +43,7 @@ Home.getLayout = (page: ReactNode) => {
 }
 
 /* 
-  *index.tsx(Home) SSG로 적용
-  - 실시간으로 변화할 데이터가 딱히 없음
-  - build 시, 미리 렌더링하여 사용자에게 빠른 로딩 속도를 제공
+  * ISR(Incremental Static Regeneration, 증분 정적 재생성)
+  - SSG방식으로 생성된 정적 페이지를 일정 시간 주기로 다시 생성하는 기술
+  - 빠른 속도로 응답(SSG의 장점) + 최신 데이터 반영(SSR의 장점)
 */
